@@ -5,3 +5,4 @@ build.gradle.kts
 gradlew.bat
 gradlew
 settings.gradle.kts
+out
