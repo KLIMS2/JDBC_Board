@@ -1,0 +1,233 @@
+package com.ysj.java.board.article.controller;
+
+import com.ysj.java.board.article.dto.Article;
+import com.ysj.java.board.article.service.ArticleService;
+import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.controller.Controller;
+import com.ysj.java.board.global.process.Request;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class ArticleController implements Controller
+{
+  private static final long ERROR = -1;
+
+  private ArticleService articleService;
+  private Scanner sc;
+  private Request rq;
+
+  public ArticleController()
+  {
+    articleService = Container.articleService;
+    sc = Container.sc;
+    rq = Container.rq;
+  }
+
+  public void run()
+  {
+    String urlPath = rq.getUrlPath();
+
+    if(urlPath.equals("/usr/article/write")) // write
+    {
+      doWrite();
+    }
+    else if(urlPath.equals("/usr/article/detail")) // detail
+    {
+      doDetail();
+    }
+    else if(urlPath.equals("/usr/article/list")) // list
+    {
+      doList();
+    }
+    else if(urlPath.equals("/usr/article/delete")) // delete
+    {
+      doDelete();
+    }
+    else if(urlPath.equals("/usr/article/modify")) // modify
+    {
+      doModify();
+    }
+    else
+    {
+      System.out.println("잘못된 입력입니다.");
+    }
+  }
+
+  // write
+  private void doWrite()
+  {
+    System.out.println("> 게시물 생성");
+
+    String title, content;
+
+    while (true)
+    {
+      System.out.print("제목: ");
+      title = sc.nextLine();
+
+      if(title.trim().isEmpty())
+      {
+        System.out.println("제목을 입력해 주세요.");
+        continue;
+      }
+
+      break;
+    }
+
+    while (true)
+    {
+      System.out.print("내용: ");
+      content = sc.nextLine();
+
+      if(content.trim().isEmpty())
+      {
+        System.out.println("내용을 입력해 주세요.");
+        continue;
+      }
+
+      break;
+    }
+
+    Article article = new Article(title, content);
+    articleService.createArticle(article);
+
+    Article newArticle = articleService.getLatestArticle();
+    System.out.printf("%d번 게시물이 생성되었습니다.\n", newArticle.getId());
+  }
+
+  //detail
+  private void doDetail()
+  {
+    long id = rq.getLongParam("id", ERROR);
+    if(id == ERROR)
+    {
+      System.out.println("id가 존재하지 않거나 정수 형태가 아닙니다.");
+      return;
+    }
+
+    Article article = articleService.getArticle(id);
+    if(article == null)
+    {
+      System.out.println("존재하지 않는 게시물입니다.");
+      return;
+    }
+
+    System.out.println("> 게시물 상세 조회");
+
+    System.out.printf("id: %d\n", article.getId());
+    System.out.printf("regDate: %s\n", article.getRegDate());
+    System.out.printf("updateDate: %s\n", article.getUpdateDate());
+    System.out.printf("title: %s\n", article.getTitle());
+    System.out.printf("content: %s\n", article.getContent());
+  }
+
+  // list
+  private void doList()
+  {
+    String orderBy = rq.getStringParam("orderBy", "idDesc");
+    if( !(orderBy.equals("idAsc") || orderBy.equals("idDesc")) )
+    {
+      System.out.println("orderBy의 값으로 (idAsc, idDesc) 중에 하나를 선택하지 않았습니다.");
+      return;
+    }
+
+    String searchKeyword = rq.getStringParam("searchKeyword", "");
+
+    List<Article> articleList = articleService.getArticles(orderBy, searchKeyword);
+    if(articleList == null)
+    {
+      System.out.println("게시물이 존재하지 않습니다.");
+      return;
+    }
+
+    System.out.printf("> 게시물 리스트(총 %d개)\n", articleList.size());
+
+    System.out.println("(id | title | regDate | updateDate)");
+    articleList.forEach(article -> {
+      System.out.printf("%d | %s | %s | %s\n",
+          article.getId(),
+          article.getTitle(),
+          article.getRegDate(),
+          article.getUpdateDate());
+    });
+  }
+
+  // delete
+  private void doDelete()
+  {
+    long id = rq.getLongParam("id", ERROR);
+    if(id == ERROR)
+    {
+      System.out.println("id가 존재하지 않거나 정수 형태가 아닙니다.");
+      return;
+    }
+
+    Article article = articleService.getArticle(id);
+    if(article == null)
+    {
+      System.out.println("존재하지 않는 게시물입니다.");
+      return;
+    }
+
+    System.out.println("> 게시물 삭제");
+
+    articleService.deleteArticle(article);
+    System.out.println(article.getId() + "번 게시물이 삭제되었습니다.");
+  }
+
+  // modify
+  private void doModify()
+  {
+    long id = rq.getLongParam("id", ERROR);
+    if(id == ERROR)
+    {
+      System.out.println("id가 존재하지 않거나 정수 형태가 아닙니다.");
+      return;
+    }
+
+    Article article = articleService.getArticle(id);
+    if(article == null)
+    {
+      System.out.println("존재하지 않는 게시물입니다.");
+      return;
+    }
+
+    System.out.println("> 게시물 수정");
+
+    String title, content;
+
+    while (true)
+    {
+      System.out.print("제목: ");
+      title = sc.nextLine();
+
+      if(title.trim().isEmpty())
+      {
+        System.out.println("제목을 입력해 주세요.");
+        continue;
+      }
+
+      break;
+    }
+
+    while (true)
+    {
+      System.out.print("내용: ");
+      content = sc.nextLine();
+
+      if(content.trim().isEmpty())
+      {
+        System.out.println("내용을 입력해 주세요.");
+        continue;
+      }
+
+      break;
+    }
+
+    article.setTitle(title);
+    article.setContent(content);
+    articleService.updateArticle(article);
+    System.out.printf("%d번 게시물이 수정되었습니다.\n", article.getId());
+  }
+}
