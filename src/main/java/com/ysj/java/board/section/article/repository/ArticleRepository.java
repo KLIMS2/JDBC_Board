@@ -1,16 +1,12 @@
-package com.ysj.java.board.article.repository;
+package com.ysj.java.board.section.article.repository;
 
-import com.ysj.java.board.article.dto.Article;
+import com.ysj.java.board.section.article.dto.Article;
 import com.ysj.java.board.global.common.Container;
-import com.ysj.java.board.global.common.repository.Repository;
+import com.ysj.java.board.section.common.repository.Repository;
 import com.ysj.java.board.global.dataBase.element.Data;
 import com.ysj.java.board.global.process.Request;
 
-import java.sql.ResultSet;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ArticleRepository extends Repository
 {
@@ -32,22 +28,9 @@ public class ArticleRepository extends Repository
         """, article.getTitle(), article.getContent());
   }
 
-  public Article getArticle(Data data)
+  private Article getArticle(Data data)
   {
-    Map<String, Object> dataRow = data.getOneData();
-    if(dataRow == null)
-    {
-      return null;
-    }
-
-    Article article = new Article(
-        (long)dataRow.get("id"),
-        (LocalDateTime)dataRow.get("regDate"),
-        (LocalDateTime)dataRow.get("updateDate"),
-        (String)dataRow.get("title"),
-        (String)dataRow.get("content"));
-
-    return article;
+    return rq.dataToArticle(data);
   }
 
   public Article getArticle(long id)
@@ -61,7 +44,7 @@ public class ArticleRepository extends Repository
     return getArticle(data);
   }
 
-  public Article getLatestArticle()
+  public Article getLastArticle()
   {
     Data data = db.sql.select("""
         SELECT *
@@ -71,6 +54,11 @@ public class ArticleRepository extends Repository
         """);
 
     return getArticle(data);
+  }
+
+  public long getLastId()
+  {
+    return getLastArticle().getId();
   }
 
   public List<Article> getArticles(String orderBy, String searchKeyword)
@@ -83,29 +71,17 @@ public class ArticleRepository extends Repository
         OR content LIKE '%?%';
         """, searchKeyword);
 
-    List<Map<String, Object>> dataRows = data.getData();
-    if(dataRows == null)
+    // 데이터 리스트 생성
+    List<Article> articles = rq.dataToArticles(data);
+    if(articles == null)
     {
       return null;
-    }
-
-    // 데이터 리스트 생성
-    List<Article> articles = new ArrayList<>();
-    for (Map<String, Object> dataRow : dataRows) {
-      Article article = new Article(
-          (long) dataRow.get("id"),
-          (LocalDateTime) dataRow.get("regDate"),
-          (LocalDateTime) dataRow.get("updateDate"),
-          (String) dataRow.get("title"),
-          (String) dataRow.get("content"));
-
-      articles.add(article);
     }
 
     // 데이터 리스트 정렬
     if(orderBy.equals("idDesc"))
     {
-      articles = rq.sortArticlesReverse(articles);
+      articles = rq.sortReverse(articles);
     }
 
     return articles;

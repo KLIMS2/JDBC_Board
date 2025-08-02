@@ -1,8 +1,7 @@
-package com.ysj.java.board.article.service;
+package com.ysj.java.board.section.article.service;
 
-import com.ysj.java.board.article.controller.ArticleController;
-import com.ysj.java.board.article.dto.Article;
-import com.ysj.java.board.article.repository.ArticleRepository;
+import com.ysj.java.board.section.article.dto.Article;
+import com.ysj.java.board.section.article.repository.ArticleRepository;
 import com.ysj.java.board.global.common.Container;
 
 import java.util.List;
@@ -21,9 +20,9 @@ public class ArticleService
     articleRepository.createArticle(article);
   }
 
-  public Article getLatestArticle()
+  public Article getLastArticle()
   {
-    return articleRepository.getLatestArticle();
+    return articleRepository.getLastArticle();
   }
 
   public Article getArticle(long id)

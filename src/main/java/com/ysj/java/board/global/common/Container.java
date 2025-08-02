@@ -1,8 +1,8 @@
 package com.ysj.java.board.global.common;
 
-import com.ysj.java.board.article.controller.ArticleController;
-import com.ysj.java.board.article.repository.ArticleRepository;
-import com.ysj.java.board.article.service.ArticleService;
+import com.ysj.java.board.section.article.controller.ArticleController;
+import com.ysj.java.board.section.article.repository.ArticleRepository;
+import com.ysj.java.board.section.article.service.ArticleService;
 import com.ysj.java.board.global.process.Request;
 
 import java.util.Scanner;

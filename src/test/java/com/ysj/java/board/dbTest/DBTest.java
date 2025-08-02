@@ -1,8 +1,12 @@
 package com.ysj.java.board.dbTest;
 
+import com.ysj.java.board.section.article.dto.Article;
+import com.ysj.java.board.global.common.Container;
 import com.ysj.java.board.global.dataBase.DB;
-import com.ysj.java.board.global.dataBase.element.DBConnector;
+import com.ysj.java.board.global.dataBase.element.Data;
 import org.junit.jupiter.api.*;
+
+import java.util.List;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.MethodName.class)
@@ -38,6 +42,7 @@ public class DBTest
         	content TEXT NOT NULL
         );
         """);
+    t1();
   }
 
   @AfterAll
@@ -78,5 +83,24 @@ public class DBTest
         """);
 
     System.out.println("data delete successful!");
+  }
+
+  @Test
+  @DisplayName("dataToDto test")
+  public void f3()
+  {
+    Data data = db.sql.select("""
+        SELECT *
+        FROM article
+        LIMIT 2;
+        """);
+
+    List<Article> article = Container.rq.dataToArticles(data);
+    System.out.println(article.get(1).getTitle());
+    System.out.println(article.get(0).getContent());
+    System.out.println(article.get(0).getRegDate());
+
+    Article article1 = Container.rq.dataToArticle(data);
+    System.out.println(article1.getContent());
   }
 }

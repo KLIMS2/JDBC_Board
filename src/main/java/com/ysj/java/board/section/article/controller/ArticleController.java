@@ -1,9 +1,9 @@
-package com.ysj.java.board.article.controller;
+package com.ysj.java.board.section.article.controller;
 
-import com.ysj.java.board.article.dto.Article;
-import com.ysj.java.board.article.service.ArticleService;
+import com.ysj.java.board.section.article.dto.Article;
+import com.ysj.java.board.section.article.service.ArticleService;
 import com.ysj.java.board.global.common.Container;
-import com.ysj.java.board.global.common.controller.Controller;
+import com.ysj.java.board.section.common.controller.Controller;
 import com.ysj.java.board.global.process.Request;
 
 import java.util.List;
@@ -92,7 +92,7 @@ public class ArticleController implements Controller
     Article article = new Article(title, content);
     articleService.createArticle(article);
 
-    Article newArticle = articleService.getLatestArticle();
+    Article newArticle = articleService.getLastArticle();
     System.out.printf("%d번 게시물이 생성되었습니다.\n", newArticle.getId());
   }
 
@@ -208,6 +208,12 @@ public class ArticleController implements Controller
         continue;
       }
 
+      if(title.trim().equals("_STAY_"))
+      {
+        title = article.getTitle();
+        break;
+      }
+
       break;
     }
 
@@ -220,6 +226,12 @@ public class ArticleController implements Controller
       {
         System.out.println("내용을 입력해 주세요.");
         continue;
+      }
+
+      if(content.trim().equals("_STAY_"))
+      {
+        content = article.getContent();
+        break;
       }
 
       break;

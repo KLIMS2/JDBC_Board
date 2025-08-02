@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Data
 {
-  protected List<Map<String, Object>> data;
+  private List<Map<String, Object>> data;
 
   public Data()
   {

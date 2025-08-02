@@ -1,16 +1,20 @@
 package com.ysj.java.board.global.process;
 
-import com.ysj.java.board.article.dto.Article;
+import com.ysj.java.board.section.article.dto.Article;
+import com.ysj.java.board.section.common.dto.DTO;
 import com.ysj.java.board.global.common.Container;
-import com.ysj.java.board.global.common.controller.Controller;
-import com.ysj.java.board.global.utility.GenericUtil;
+import com.ysj.java.board.section.common.controller.Controller;
+import com.ysj.java.board.global.dataBase.element.Data;
 import com.ysj.java.board.global.utility.Util;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public class Request
 {
     private String url;
@@ -53,7 +57,7 @@ public class Request
         {
             if(params.get(key).equals("LAST"))
             {
-                return Container.articleRepository.getLatestArticle().getId();
+                return Container.articleRepository.getLastId();
             }
 
             return defaultValue;
@@ -96,9 +100,46 @@ public class Request
         return Util.substitution(string, before, after);
     }
 
-    public List<Article> sortArticlesReverse(List<Article> articles)
+    public <T> List<T> sortReverse(List<T> articles)
     {
-        GenericUtil<Article> genericUtil = new GenericUtil<>();
-        return genericUtil.sortReverse(articles);
+        return Util.sortReverse(articles);
+    }
+
+    public List<Article> dataToArticles(Data data)
+    {
+        List<Map<String, Object>> list = data.getData();
+        if(list == null)
+        {
+            return null;
+        }
+
+        List<DTO> dtoList = new ArrayList<>();
+        int length = list.size();
+
+        for(int a = 0; a < length; a++)
+        {
+            dtoList.add(new Article());
+        }
+
+        List<DTO> rs = Util.dataToDtoList(data, dtoList);
+        List<Article> articleList = new ArrayList<>();
+
+        for(int a = 0; a < length; a++)
+        {
+            articleList.add((Article) rs.get(a));
+        }
+
+        return articleList;
+    }
+
+    public Article dataToArticle(Data data)
+    {
+        List<Article> rs = dataToArticles(data);
+        if(rs == null)
+        {
+            return null;
+        }
+
+        return rs.get(0);
     }
 }

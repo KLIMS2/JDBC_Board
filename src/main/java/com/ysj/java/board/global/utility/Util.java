@@ -1,11 +1,12 @@
 package com.ysj.java.board.global.utility;
 
-import com.ysj.java.board.article.dto.Article;
+import com.ysj.java.board.section.common.dto.DTO;
+import com.ysj.java.board.global.dataBase.element.Data;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Util
 {
@@ -83,5 +84,61 @@ public class Util
     rs += strings[strings.length - 1];
 
     return rs;
+  }
+
+  public static <T> void swap(List<T> list, int index1, int index2)
+  {
+    if(list.isEmpty())
+    {
+      return;
+    }
+
+    T temp = list.get(index1);
+    list.set(index1, list.get(index2));
+    list.set(index2, temp);
+  }
+
+  public static <T> List<T> sortReverse(List<T> list)
+  {
+    if(list.isEmpty())
+    {
+      return null;
+    }
+
+    for(int a = 0; a < list.size() / 2; a++)
+    {
+      swap(list, a, (list.size() - 1) - a);
+    }
+
+    return list;
+  }
+
+  public static List<DTO> dataToDtoList(Data data, List<DTO> dtoList)
+  {
+    Class dtoClass = dtoList.get(0).getClass();
+    Field[] superFields = dtoClass.getSuperclass().getDeclaredFields();
+    Field[] fields = dtoClass.getDeclaredFields();
+    List<Map<String, Object>> dataRows = data.getData();
+
+    if(dataRows == null)
+    {
+      return null;
+    }
+
+    for(int a = 0; a < dataRows.size(); a++)
+    {
+      for(int b = 0; b < superFields.length; b++)
+      {
+        String fieldName = superFields[b].getName();
+        dtoList.get(a).setField(fieldName, dataRows.get(a).get(fieldName));
+      }
+      for(int b = 0; b < fields.length; b++)
+      {
+        String fieldName = fields[b].getName();
+        dtoList.get(a).setField(fieldName, dataRows.get(a).get(fieldName));
+      }
+    }
+
+    return dtoList;
   }
 }

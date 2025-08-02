@@ -1,4 +1,4 @@
-package com.ysj.java.board.global.common.repository;
+package com.ysj.java.board.section.common.repository;
 
 import com.ysj.java.board.global.dataBase.DB;
 import com.ysj.java.board.global.dataBase.element.DBConnector;

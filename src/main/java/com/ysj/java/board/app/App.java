@@ -1,9 +1,8 @@
 package com.ysj.java.board.app;
 
 import com.ysj.java.board.global.common.Container;
-import com.ysj.java.board.global.common.controller.Controller;
+import com.ysj.java.board.section.common.controller.Controller;
 import com.ysj.java.board.global.dataBase.DB;
-import com.ysj.java.board.global.dataBase.element.DBConnector;
 import com.ysj.java.board.global.process.Request;
 
 import java.util.Scanner;
