@@ -61,27 +61,54 @@ public class ArticleRepository extends Repository
     return getLastArticle().getId();
   }
 
-  public List<Article> getArticles(String orderBy, String searchKeyword)
+  public List<Article> getArticles(String orderBy, String searchType, String searchKeyword)
   {
-    // 데이터 검색
-    Data data = db.sql.select("""
+    // 데이터 검색 및 정렬
+    db.sql.append("""
         SELECT *
         FROM article
-        WHERE title LIKE '%?%'
-        OR content LIKE '%?%';
-        """, searchKeyword);
+        """);
+
+    if(searchType.equals("title"))
+    {
+      db.sql.append("""
+          WHERE title LIKE '%?%'
+          """, searchKeyword);
+    }
+    else if(searchType.equals("content"))
+    {
+      db.sql.append("""
+          WHERE content LIKE '%?%'
+          """, searchKeyword);
+    }
+    else
+    {
+      db.sql.append("""
+          WHERE title LIKE '%?%'
+          OR content LIKE '%?%'
+          """, searchKeyword);
+    }
+
+    if(orderBy.equals("idAsc"))
+    {
+      db.sql.append("""
+        ORDER BY id Asc;
+        """);
+    }
+    else
+    {
+      db.sql.append("""
+        ORDER BY id Desc;
+        """);
+    }
+
+    Data data = db.sql.select();
 
     // 데이터 리스트 생성
     List<Article> articles = rq.dataToArticles(data);
     if(articles == null)
     {
       return null;
-    }
-
-    // 데이터 리스트 정렬
-    if(orderBy.equals("idDesc"))
-    {
-      articles = rq.sortReverse(articles);
     }
 
     return articles;

@@ -6,12 +6,15 @@ import com.ysj.java.board.global.common.Container;
 import com.ysj.java.board.section.common.controller.Controller;
 import com.ysj.java.board.global.dataBase.element.Data;
 import com.ysj.java.board.global.utility.Util;
+import com.ysj.java.board.section.member.dto.Member;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.ysj.java.board.global.common.Constant.QUERYKEYWORD_LAST;
 
 @Getter
 @Setter
@@ -29,18 +32,13 @@ public class Request
 
     public void run()
     {
-        if(url.isEmpty())
-        {
-            return;
-        }
-
         urlPath = Util.getUrlPath(url);
         params = Util.getParams(url);
     }
 
     public long getLongParam(String key, long defaultValue)
     {
-        if(params == null)
+        if(params == null || params.isEmpty())
         {
             return defaultValue;
         }
@@ -55,7 +53,7 @@ public class Request
         }
         catch (NumberFormatException e)
         {
-            if(params.get(key).equals("LAST"))
+            if(params.get(key).equals(QUERYKEYWORD_LAST))
             {
                 return Container.articleRepository.getLastId();
             }
@@ -66,7 +64,7 @@ public class Request
 
     public String getStringParam(String key, String defaultValue)
     {
-        if(params == null)
+        if(params == null || params.isEmpty())
         {
             return defaultValue;
         }
@@ -80,7 +78,7 @@ public class Request
 
     public Controller getController()
     {
-        if(urlPath == null)
+        if(urlPath == null || urlPath.isEmpty())
         {
             return null;
         }
@@ -88,6 +86,10 @@ public class Request
         if(urlPath.startsWith("/usr/article"))
         {
             return Container.articleController;
+        }
+        else if(urlPath.startsWith("/usr/member"))
+        {
+            return Container.memberController;
         }
         else
         {
@@ -108,7 +110,7 @@ public class Request
     public List<Article> dataToArticles(Data data)
     {
         List<Map<String, Object>> list = data.getData();
-        if(list == null)
+        if(list == null || list.isEmpty())
         {
             return null;
         }
@@ -135,7 +137,45 @@ public class Request
     public Article dataToArticle(Data data)
     {
         List<Article> rs = dataToArticles(data);
-        if(rs == null)
+        if(rs == null || rs.isEmpty())
+        {
+            return null;
+        }
+
+        return rs.get(0);
+    }
+
+    public List<Member> dataToMembers(Data data)
+    {
+        List<Map<String, Object>> list = data.getData();
+        if(list == null || list.isEmpty())
+        {
+            return null;
+        }
+
+        List<DTO> dtoList = new ArrayList<>();
+        int length = list.size();
+
+        for(int a = 0; a < length; a++)
+        {
+            dtoList.add(new Member());
+        }
+
+        List<DTO> rs = Util.dataToDtoList(data, dtoList);
+        List<Member> articleList = new ArrayList<>();
+
+        for(int a = 0; a < length; a++)
+        {
+            articleList.add((Member) rs.get(a));
+        }
+
+        return articleList;
+    }
+
+    public Member dataToMember(Data data)
+    {
+        List<Member> rs = dataToMembers(data);
+        if(rs == null || rs.isEmpty())
         {
             return null;
         }

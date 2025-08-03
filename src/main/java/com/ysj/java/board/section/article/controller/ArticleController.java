@@ -9,10 +9,10 @@ import com.ysj.java.board.global.process.Request;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.ysj.java.board.global.common.Constant.*;
+
 public class ArticleController implements Controller
 {
-  private static final long ERROR = -1;
-
   private ArticleService articleService;
   private Scanner sc;
   private Request rq;
@@ -64,9 +64,9 @@ public class ArticleController implements Controller
     while (true)
     {
       System.out.print("제목: ");
-      title = sc.nextLine();
+      title = sc.nextLine().trim();
 
-      if(title.trim().isEmpty())
+      if(title.isEmpty())
       {
         System.out.println("제목을 입력해 주세요.");
         continue;
@@ -78,9 +78,9 @@ public class ArticleController implements Controller
     while (true)
     {
       System.out.print("내용: ");
-      content = sc.nextLine();
+      content = sc.nextLine().trim();
 
-      if(content.trim().isEmpty())
+      if(content.isEmpty())
       {
         System.out.println("내용을 입력해 주세요.");
         continue;
@@ -116,8 +116,8 @@ public class ArticleController implements Controller
     System.out.println("> 게시물 상세 조회");
 
     System.out.printf("id: %d\n", article.getId());
-    System.out.printf("regDate: %s\n", article.getRegDate());
-    System.out.printf("updateDate: %s\n", article.getUpdateDate());
+    System.out.printf("regDate: %s\n", article.getFormatRegDate());
+    System.out.printf("updateDate: %s\n", article.getFormatUpdateDate());
     System.out.printf("title: %s\n", article.getTitle());
     System.out.printf("content: %s\n", article.getContent());
   }
@@ -125,16 +125,23 @@ public class ArticleController implements Controller
   // list
   private void doList()
   {
-    String orderBy = rq.getStringParam("orderBy", "idDesc");
+    String orderBy = rq.getStringParam("orderBy", DEFAULT_ORDERBY);
     if( !(orderBy.equals("idAsc") || orderBy.equals("idDesc")) )
     {
       System.out.println("orderBy의 값으로 (idAsc, idDesc) 중에 하나를 선택하지 않았습니다.");
       return;
     }
 
-    String searchKeyword = rq.getStringParam("searchKeyword", "");
+    String searchType = rq.getStringParam("searchType", DEFAULT_SEARCHTYPE);
+    if( !(searchType.equals("title,content") || searchType.equals("title") || searchType.equals("content")) )
+    {
+      System.out.println("searchType의 값으로 (title,content | title | content) 중에 하나를 선택하지 않았습니다.");
+      return;
+    }
 
-    List<Article> articleList = articleService.getArticles(orderBy, searchKeyword);
+    String searchKeyword = rq.getStringParam("searchKeyword", DEFAULT_SEARCHKEYWORD);
+
+    List<Article> articleList = articleService.getArticles(orderBy, searchType, searchKeyword);
     if(articleList == null)
     {
       System.out.println("게시물이 존재하지 않습니다.");
@@ -148,8 +155,8 @@ public class ArticleController implements Controller
       System.out.printf("%d | %s | %s | %s\n",
           article.getId(),
           article.getTitle(),
-          article.getRegDate(),
-          article.getUpdateDate());
+          article.getFormatRegDate(),
+          article.getFormatUpdateDate());
     });
   }
 
@@ -200,15 +207,15 @@ public class ArticleController implements Controller
     while (true)
     {
       System.out.print("제목: ");
-      title = sc.nextLine();
+      title = sc.nextLine().trim();
 
-      if(title.trim().isEmpty())
+      if(title.isEmpty())
       {
         System.out.println("제목을 입력해 주세요.");
         continue;
       }
 
-      if(title.trim().equals("_STAY_"))
+      if(title.equals(QUERYKEYWORD_STAY))
       {
         title = article.getTitle();
         break;
@@ -220,15 +227,15 @@ public class ArticleController implements Controller
     while (true)
     {
       System.out.print("내용: ");
-      content = sc.nextLine();
+      content = sc.nextLine().trim();
 
-      if(content.trim().isEmpty())
+      if(content.isEmpty())
       {
         System.out.println("내용을 입력해 주세요.");
         continue;
       }
 
-      if(content.trim().equals("_STAY_"))
+      if(content.equals(QUERYKEYWORD_STAY))
       {
         content = article.getContent();
         break;

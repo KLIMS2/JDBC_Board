@@ -1,23 +1,13 @@
 package com.ysj.java.board.section.common.repository;
 
 import com.ysj.java.board.global.dataBase.DB;
-import com.ysj.java.board.global.dataBase.element.DBConnector;
 
-public class Repository
+public abstract class Repository
 {
-  protected DB db;
+  protected static DB db;
 
-  public Repository()
+  public static void setDB(DB database)
   {
-    db = new DB(
-        "localhost",
-        "ysj",
-        "asdf1",
-        "JDBC_Board");
-  }
-
-  public DB getDb()
-  {
-    return db;
+    db = database;
   }
 }

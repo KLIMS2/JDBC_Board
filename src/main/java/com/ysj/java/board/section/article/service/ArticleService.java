@@ -30,9 +30,9 @@ public class ArticleService
     return articleRepository.getArticle(id);
   }
 
-  public List<Article> getArticles(String orderBy, String searchKeyword)
+  public List<Article> getArticles(String orderBy, String searchType, String searchKeyword)
   {
-    return articleRepository.getArticles(orderBy, searchKeyword);
+    return articleRepository.getArticles(orderBy, searchType, searchKeyword);
   }
 
   public void deleteArticle(Article article)

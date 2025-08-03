@@ -4,6 +4,7 @@ import com.ysj.java.board.global.common.Container;
 import com.ysj.java.board.section.common.controller.Controller;
 import com.ysj.java.board.global.dataBase.DB;
 import com.ysj.java.board.global.process.Request;
+import com.ysj.java.board.section.common.repository.Repository;
 
 import java.util.Scanner;
 
@@ -15,13 +16,19 @@ public class App
 
     Scanner sc = Container.sc;
     Request rq = Container.rq;
-    DB db = Container.articleRepository.getDb();
+    DB db = new DB(
+        "localhost",
+        "ysj",
+        "asdf1",
+        "JDBC_Board");
+    Repository.setDB(db);
+
     Controller controller;
     String cmd;
 
     while(true)
     {
-      System.out.print("명령) "); cmd = sc.nextLine();
+      System.out.print("명령) "); cmd = sc.nextLine().trim();
       rq.setUrl(cmd); rq.run();
 
       controller = rq.getController();

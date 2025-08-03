@@ -42,7 +42,7 @@ public class DBTest
         	content TEXT NOT NULL
         );
         """);
-    t1();
+//    t1();
   }
 
   @AfterAll
@@ -66,9 +66,18 @@ public class DBTest
         INSERT INTO article
         SET regDate = NOW(),
         updateDate = NOW(),
-        title = '%s',
-        content = '%s';
-        """.formatted(title, content));
+        title = '?',
+        content = '?';
+        """, title, content);
+
+      db.sql.append("""
+          INSERT INTO article
+          SET regDate = NOW(),
+          updateDate = NOW(),
+          """);
+      db.sql.append("title = '?',", title);
+      db.sql.append("content = '?';", content);
+      db.sql.run();
     }
 
     System.out.println("data create successful!");

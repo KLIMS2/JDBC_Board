@@ -35,6 +35,7 @@ public class DBConnector
     {
       // 1. JDBC 드라이버 로드
       Class.forName("com.mysql.cj.jdbc.Driver");
+      System.out.println("------------------");
       System.out.println("드라이버 로드 성공!");
 
       // 2. 데이터베이스 연결 시도
@@ -63,6 +64,7 @@ public class DBConnector
         conn.close();
         System.out.println("------------------");
         System.out.println("데이터베이스 연결 종료!");
+        System.out.println("------------------");
       }
     }
     catch (SQLException e)
