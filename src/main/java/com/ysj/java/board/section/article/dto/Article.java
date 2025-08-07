@@ -12,4 +12,6 @@ public class Article extends DTO
 {
   private String title;
   private String content;
+  private long memberId;
+  private String writer;
 }

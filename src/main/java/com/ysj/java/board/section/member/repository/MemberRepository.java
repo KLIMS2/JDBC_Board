@@ -1,6 +1,6 @@
 package com.ysj.java.board.section.member.repository;
 
-import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.contain.Container;
 import com.ysj.java.board.global.dataBase.element.Data;
 import com.ysj.java.board.global.process.Request;
 import com.ysj.java.board.section.common.repository.Repository;
@@ -53,5 +53,24 @@ public class MemberRepository extends Repository
         """);
 
     return getMember(data);
+  }
+
+  public void updateMember(Member member)
+  {
+    db.sql.run("""
+        UPDATE _member
+        SET updateDate = NOW(),
+        password = '?',
+        nickname = '?'
+        WHERE userId = '?';
+        """, member.getPassword(), member.getNickname(), member.getUserId());
+  }
+
+  public void deleteMember(Member member)
+  {
+    db.sql.run("""
+        DELETE FROM _member
+        WHERE userId = '?';
+        """, member.getUserId());
   }
 }

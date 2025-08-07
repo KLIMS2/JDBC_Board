@@ -7,7 +7,9 @@ import org.junit.jupiter.api.*;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 public class Asdf {
   private List<Article> list;
 
+  /*
   @BeforeAll
   public void beforeAll()
   {
@@ -30,16 +33,18 @@ public class Asdf {
       System.out.println(article);
     });
     System.out.println();
-  }
+  }*/
 
+  /*
   @Test
   @DisplayName("list reverse")
   public void t1()
   {
     Request rq = new Request();
     rq.sortReverse(list);
-  }
+  }*/
 
+  /*
   @Test
   @DisplayName("Field test")
   public void t2()
@@ -64,13 +69,33 @@ public class Asdf {
       System.out.println("title: " + article.getTitle());
       System.out.println("content: " + article.getContent());
     }
+  }*/
+
+  @Test
+  @DisplayName("map test")
+  void t3()
+  {
+    Map<String, Object> map = new HashMap<>();
+    map.put("key", "value");
+    map.put("key", "val");
+    System.out.println(map.get("key"));
+    System.out.println(map.size());
   }
 
+  @Test
+  @DisplayName("split test")
+  public void t4()
+  {
+    String[] strings = "title".split(",");
+    System.out.println(strings[0]);
+  }
+
+  /*
   @AfterAll
   public void afterAll()
   {
     list.forEach(article -> {
       System.out.println(article);
     });
-  }
+  }*/
 }

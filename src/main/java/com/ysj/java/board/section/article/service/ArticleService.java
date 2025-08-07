@@ -2,7 +2,7 @@ package com.ysj.java.board.section.article.service;
 
 import com.ysj.java.board.section.article.dto.Article;
 import com.ysj.java.board.section.article.repository.ArticleRepository;
-import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.contain.Container;
 
 import java.util.List;
 

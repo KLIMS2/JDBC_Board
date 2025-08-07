@@ -1,6 +1,6 @@
 package com.ysj.java.board.global.dataBase.element;
 
-import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.contain.Container;
 import com.ysj.java.board.global.process.Request;
 
 import java.sql.ResultSet;

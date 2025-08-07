@@ -1,12 +1,14 @@
 package com.ysj.java.board.section.article.repository;
 
 import com.ysj.java.board.section.article.dto.Article;
-import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.contain.Container;
 import com.ysj.java.board.section.common.repository.Repository;
 import com.ysj.java.board.global.dataBase.element.Data;
 import com.ysj.java.board.global.process.Request;
 
 import java.util.List;
+
+import static com.ysj.java.board.global.common.object.Constant.SEARCHKEYWORD_WRITER;
 
 public class ArticleRepository extends Repository
 {
@@ -24,8 +26,9 @@ public class ArticleRepository extends Repository
         SET regDate = NOW(),
         updateDate = NOW(),
         title = '?',
-        content = '?';
-        """, article.getTitle(), article.getContent());
+        content = '?',
+        memberId = ?;
+        """, article.getTitle(), article.getContent(), article.getMemberId() + "");
   }
 
   private Article getArticle(Data data)
@@ -36,9 +39,11 @@ public class ArticleRepository extends Repository
   public Article getArticle(long id)
   {
     Data data = db.sql.select("""
-        SELECT *
-        FROM article
-        WHERE id = ?;
+        SELECT A.*, M.nickname AS `writer`
+        FROM article AS A
+        INNER JOIN _member AS M
+        ON A.memberId = M.id
+        WHERE A.id = ?;
         """, id + "");
 
     return getArticle(data);
@@ -47,9 +52,11 @@ public class ArticleRepository extends Repository
   public Article getLastArticle()
   {
     Data data = db.sql.select("""
-        SELECT *
-        FROM article
-        ORDER BY id DESC
+        SELECT A.*, M.nickname AS `writer`
+        FROM article AS A
+        INNER JOIN _member AS M
+        ON A.memberId = M.id
+        ORDER BY A.id DESC
         LIMIT 1;
         """);
 
@@ -63,42 +70,55 @@ public class ArticleRepository extends Repository
 
   public List<Article> getArticles(String orderBy, String searchType, String searchKeyword)
   {
-    // 데이터 검색 및 정렬
+    // 데이터 검색
     db.sql.append("""
-        SELECT *
-        FROM article
+        SELECT A.*, M.nickname AS `writer`
+        FROM article AS A
+        INNER JOIN _member AS M
+        ON A.memberId = M.id
         """);
 
-    if(searchType.equals("title"))
+    String[] searchTypes = searchType.split(",");
+    if(searchTypes[0].equals(SEARCHKEYWORD_WRITER))
     {
       db.sql.append("""
-          WHERE title LIKE '%?%'
-          """, searchKeyword);
-    }
-    else if(searchType.equals("content"))
-    {
-      db.sql.append("""
-          WHERE content LIKE '%?%'
+          WHERE M.nickname LIKE '%?%'
           """, searchKeyword);
     }
     else
     {
       db.sql.append("""
-          WHERE title LIKE '%?%'
-          OR content LIKE '%?%'
-          """, searchKeyword);
+          WHERE A.? LIKE '%?%'
+          """, searchTypes[0], searchKeyword);
     }
 
+    for(int a = 1; a < searchTypes.length; a++)
+    {
+      if(searchTypes[a].equals(SEARCHKEYWORD_WRITER))
+      {
+        db.sql.append("""
+          OR M.nickname LIKE '%?%'
+          """, searchKeyword);
+      }
+      else
+      {
+        db.sql.append("""
+          OR A.? LIKE '%?%'
+          """, searchTypes[a], searchKeyword);
+      }
+    }
+
+    // 데이터 정렬
     if(orderBy.equals("idAsc"))
     {
       db.sql.append("""
-        ORDER BY id Asc;
+        ORDER BY A.id Asc;
         """);
     }
     else
     {
       db.sql.append("""
-        ORDER BY id Desc;
+        ORDER BY A.id Desc;
         """);
     }
 

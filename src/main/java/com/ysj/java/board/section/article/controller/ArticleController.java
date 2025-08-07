@@ -2,14 +2,15 @@ package com.ysj.java.board.section.article.controller;
 
 import com.ysj.java.board.section.article.dto.Article;
 import com.ysj.java.board.section.article.service.ArticleService;
-import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.contain.Container;
 import com.ysj.java.board.section.common.controller.Controller;
 import com.ysj.java.board.global.process.Request;
+import com.ysj.java.board.section.member.dto.Member;
 
 import java.util.List;
 import java.util.Scanner;
 
-import static com.ysj.java.board.global.common.Constant.*;
+import static com.ysj.java.board.global.common.object.Constant.*;
 
 public class ArticleController implements Controller
 {
@@ -89,7 +90,8 @@ public class ArticleController implements Controller
       break;
     }
 
-    Article article = new Article(title, content);
+    Member member = rq.getLoginedMember();
+    Article article = new Article(title, content, member.getId(), member.getNickname());
     articleService.createArticle(article);
 
     Article newArticle = articleService.getLastArticle();
@@ -119,6 +121,7 @@ public class ArticleController implements Controller
     System.out.printf("regDate: %s\n", article.getFormatRegDate());
     System.out.printf("updateDate: %s\n", article.getFormatUpdateDate());
     System.out.printf("title: %s\n", article.getTitle());
+    System.out.printf("writer: %s\n", article.getWriter());
     System.out.printf("content: %s\n", article.getContent());
   }
 
@@ -126,16 +129,18 @@ public class ArticleController implements Controller
   private void doList()
   {
     String orderBy = rq.getStringParam("orderBy", DEFAULT_ORDERBY);
-    if( !(orderBy.equals("idAsc") || orderBy.equals("idDesc")) )
+    if( !(orderBy.equals(ORDERBYKEYWORD_ASC) || orderBy.equals(ORDERBYKEYWORD_DESC)) )
     {
       System.out.println("orderBy의 값으로 (idAsc, idDesc) 중에 하나를 선택하지 않았습니다.");
       return;
     }
 
     String searchType = rq.getStringParam("searchType", DEFAULT_SEARCHTYPE);
-    if( !(searchType.equals("title,content") || searchType.equals("title") || searchType.equals("content")) )
+    if( !(searchType.contains(SEARCHKEYWORD_TITLE) ||
+        searchType.contains(SEARCHKEYWORD_CONTENT) ||
+        searchType.contains(SEARCHKEYWORD_WRITER)) )
     {
-      System.out.println("searchType의 값으로 (title,content | title | content) 중에 하나를 선택하지 않았습니다.");
+      System.out.println("searchType의 값으로 (title | content | writer) 중에서 적어도 하나를 선택하지 않았습니다.");
       return;
     }
 
@@ -150,13 +155,13 @@ public class ArticleController implements Controller
 
     System.out.printf("> 게시물 리스트(총 %d개)\n", articleList.size());
 
-    System.out.println("(id | title | regDate | updateDate)");
+    System.out.println("(id | title | regDate | writer)");
     articleList.forEach(article -> {
       System.out.printf("%d | %s | %s | %s\n",
           article.getId(),
           article.getTitle(),
           article.getFormatRegDate(),
-          article.getFormatUpdateDate());
+          article.getWriter());
     });
   }
 

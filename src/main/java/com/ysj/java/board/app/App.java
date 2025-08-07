@@ -1,6 +1,8 @@
 package com.ysj.java.board.app;
 
-import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.contain.Container;
+import com.ysj.java.board.global.intercept.login.LoginIntercept;
+import com.ysj.java.board.global.intercept.logout.LogoutIntercept;
 import com.ysj.java.board.section.common.controller.Controller;
 import com.ysj.java.board.global.dataBase.DB;
 import com.ysj.java.board.global.process.Request;
@@ -8,8 +10,18 @@ import com.ysj.java.board.section.common.repository.Repository;
 
 import java.util.Scanner;
 
+import static com.ysj.java.board.global.common.object.Constant.DEFAULT_PROMPT;
+
 public class App
 {
+  private boolean isIntercept(Request rq)
+  {
+    LoginIntercept loginIntercept = Container.loginIntercept;
+    LogoutIntercept logoutIntercept = Container.logoutIntercept;
+
+    return loginIntercept.run(rq) || logoutIntercept.run(rq);
+  }
+
   public void run()
   {
     System.out.println("--> 자바 프로그램 시작 <--");
@@ -24,12 +36,26 @@ public class App
     Repository.setDB(db);
 
     Controller controller;
-    String cmd;
+    String prompt, cmd;
 
     while(true)
     {
-      System.out.print("명령) "); cmd = sc.nextLine().trim();
+      if(rq.isLogin())
+      {
+        prompt = rq.getLoginedMember().getUserId();
+      }
+      else
+      {
+        prompt = DEFAULT_PROMPT;
+      }
+
+      System.out.print(prompt + ") "); cmd = sc.nextLine().trim();
       rq.setUrl(cmd); rq.run();
+
+      if(isIntercept(rq))
+      {
+        continue;
+      }
 
       controller = rq.getController();
 

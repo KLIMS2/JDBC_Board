@@ -1,8 +1,9 @@
 package com.ysj.java.board.global.process;
 
+import com.ysj.java.board.global.common.object.Session;
 import com.ysj.java.board.section.article.dto.Article;
 import com.ysj.java.board.section.common.dto.DTO;
-import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.contain.Container;
 import com.ysj.java.board.section.common.controller.Controller;
 import com.ysj.java.board.global.dataBase.element.Data;
 import com.ysj.java.board.global.utility.Util;
@@ -14,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.ysj.java.board.global.common.Constant.QUERYKEYWORD_LAST;
+import static com.ysj.java.board.global.common.object.Constant.QUERYKEYWORD_LAST;
+import static com.ysj.java.board.global.common.object.Constant.SESSIONKEYWORD_LOGIN;
 
 @Getter
 @Setter
@@ -23,11 +25,13 @@ public class Request
     private String url;
     private String urlPath;
     private Map<String, String> params;
+    private Session session;
 
     public Request()
     {
         url = null;
         params = null;
+        session = Container.session;
     }
 
     public void run()
@@ -128,7 +132,7 @@ public class Request
 
         for(int a = 0; a < length; a++)
         {
-            articleList.add((Article) rs.get(a));
+            articleList.add( (Article)rs.get(a) );
         }
 
         return articleList;
@@ -166,7 +170,7 @@ public class Request
 
         for(int a = 0; a < length; a++)
         {
-            articleList.add((Member) rs.get(a));
+            articleList.add( (Member)rs.get(a) );
         }
 
         return articleList;
@@ -181,5 +185,30 @@ public class Request
         }
 
         return rs.get(0);
+    }
+
+    public void login(Member member)
+    {
+        session.setSession(SESSIONKEYWORD_LOGIN, member);
+    }
+
+    public Member getLoginedMember()
+    {
+        return (Member)session.getSession(SESSIONKEYWORD_LOGIN);
+    }
+
+    public void logout()
+    {
+        session.removeSession(SESSIONKEYWORD_LOGIN);
+    }
+
+    public boolean isLogin()
+    {
+        return session.isExistSession(SESSIONKEYWORD_LOGIN);
+    }
+
+    public boolean isLogout()
+    {
+        return !isLogin();
     }
 }

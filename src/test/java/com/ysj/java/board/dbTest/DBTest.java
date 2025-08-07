@@ -1,7 +1,7 @@
 package com.ysj.java.board.dbTest;
 
 import com.ysj.java.board.section.article.dto.Article;
-import com.ysj.java.board.global.common.Container;
+import com.ysj.java.board.global.common.contain.Container;
 import com.ysj.java.board.global.dataBase.DB;
 import com.ysj.java.board.global.dataBase.element.Data;
 import org.junit.jupiter.api.*;

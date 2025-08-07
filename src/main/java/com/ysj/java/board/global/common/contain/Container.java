@@ -1,5 +1,8 @@
-package com.ysj.java.board.global.common;
+package com.ysj.java.board.global.common.contain;
 
+import com.ysj.java.board.global.common.object.Session;
+import com.ysj.java.board.global.intercept.login.LoginIntercept;
+import com.ysj.java.board.global.intercept.logout.LogoutIntercept;
 import com.ysj.java.board.section.article.controller.ArticleController;
 import com.ysj.java.board.section.article.repository.ArticleRepository;
 import com.ysj.java.board.section.article.service.ArticleService;
@@ -13,7 +16,10 @@ import java.util.Scanner;
 public class Container
 {
   public static Scanner sc;
+  public static Session session;
   public static Request rq;
+  public static LoginIntercept loginIntercept;
+  public static LogoutIntercept logoutIntercept;
 
   public static ArticleRepository articleRepository;
   public static ArticleService articleService;
@@ -26,7 +32,10 @@ public class Container
   static
   {
     sc = new Scanner(System.in);
+    session = new Session();
     rq = new Request();
+    loginIntercept = new LoginIntercept();
+    logoutIntercept = new LogoutIntercept();
 
     articleRepository = new ArticleRepository();
     articleService = new ArticleService();
