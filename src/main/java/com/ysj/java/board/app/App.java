@@ -1,6 +1,7 @@
 package com.ysj.java.board.app;
 
 import com.ysj.java.board.global.common.contain.Container;
+import com.ysj.java.board.global.common.object.Session;
 import com.ysj.java.board.global.intercept.login.LoginIntercept;
 import com.ysj.java.board.global.intercept.logout.LogoutIntercept;
 import com.ysj.java.board.section.common.controller.Controller;
@@ -14,6 +15,20 @@ import static com.ysj.java.board.global.common.object.Constant.DEFAULT_PROMPT;
 
 public class App
 {
+  private DB settingDB()
+  {
+    DB db = new DB(
+        "localhost",
+        "ysj",
+        "asdf1",
+        "JDBC_Board");
+
+    Repository.setDB(db);
+    Session.setDB(db);
+
+    return db;
+  }
+
   private boolean isIntercept(Request rq)
   {
     LoginIntercept loginIntercept = Container.loginIntercept;
@@ -28,12 +43,7 @@ public class App
 
     Scanner sc = Container.sc;
     Request rq = Container.rq;
-    DB db = new DB(
-        "localhost",
-        "ysj",
-        "asdf1",
-        "JDBC_Board");
-    Repository.setDB(db);
+    DB db = settingDB();
 
     Controller controller;
     String prompt, cmd;

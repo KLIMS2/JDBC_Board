@@ -1,12 +1,16 @@
 package com.ysj.java.board.dbTest;
 
+import com.ysj.java.board.global.common.object.Session;
 import com.ysj.java.board.section.article.dto.Article;
 import com.ysj.java.board.global.common.contain.Container;
 import com.ysj.java.board.global.dataBase.DB;
 import com.ysj.java.board.global.dataBase.element.Data;
+import com.ysj.java.board.section.member.dto.Member;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
+
+import static com.ysj.java.board.global.common.object.Constant.SESSIONKEYWORD_LOGIN;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.MethodName.class)
@@ -96,7 +100,7 @@ public class DBTest
 
   @Test
   @DisplayName("dataToDto test")
-  public void f3()
+  public void t3()
   {
     Data data = db.sql.select("""
         SELECT *
@@ -111,5 +115,34 @@ public class DBTest
 
     Article article1 = Container.rq.dataToArticle(data);
     System.out.println(article1.getContent());
+  }
+
+  @Test
+  @DisplayName("session test")
+  void t4()
+  {
+    DB db = new DB(
+        "localhost",
+        "ysj",
+        "asdf1",
+        "JDBC_Board");
+    Session.setDB(db);
+
+    Session session = new Session();
+    Member member = new Member("user1", "1234", "user1");
+    member.setId(1L); member.setRegDate(null); member.setUpdateDate(null);
+
+    session.setSession(SESSIONKEYWORD_LOGIN, member);
+
+    Member member1 = (Member) session.getSession(SESSIONKEYWORD_LOGIN);
+    System.out.println(member1.getUserId());
+    System.out.println(member1.getPassword());
+    System.out.println(member1.getFormatRegDate());
+    System.out.println(member1.getFormatUpdateDate());
+
+    System.out.println(session.isExistSession(SESSIONKEYWORD_LOGIN));
+
+//    session.removeSession(SESSIONKEYWORD_LOGIN);
+//    System.out.println(session.isExistSession(SESSIONKEYWORD_LOGIN));
   }
 }
